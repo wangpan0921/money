@@ -282,6 +282,7 @@
     const input = collectInput();
     const result = TaxEngine.calculateAnnualIncome(input);
     renderResults(result, input);
+    if (window.Tracker) Tracker.track("calculate");
   }
 
   function renderResults(result, input) {
@@ -426,6 +427,7 @@
   function save() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(snapshot()));
     toast("已保存到本地", "success");
+    if (window.Tracker) Tracker.track("save_local");
   }
 
   async function exportScreenshot() {
@@ -484,6 +486,7 @@
       link.href = canvas.toDataURL("image/png");
       link.click();
       toast("截图已下载", "success");
+      if (window.Tracker) Tracker.track("export_image");
     } catch (error) {
       console.error(error);
       toast("截图失败：" + error.message, "error");

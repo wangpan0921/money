@@ -1,0 +1,8 @@
+# 真实数据库凭据，不入仓库
+api/config.php
+
+# 系统/编辑器
+.DS_Store
+*.swp
+.vscode/
+.idea/
