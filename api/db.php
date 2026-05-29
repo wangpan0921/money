@@ -23,6 +23,8 @@ function db(): PDO {
             PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
             PDO::ATTR_EMULATE_PREPARES   => false,
         ]);
+        // 服务器在美国，强制本会话使用北京时间，让 CURRENT_TIMESTAMP 返回 +08:00
+        $pdo->exec("SET time_zone = '+08:00'");
     }
     return $pdo;
 }
