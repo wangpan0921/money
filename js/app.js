@@ -56,6 +56,7 @@
     $("#btnAddRsu").addEventListener("click", () => addRsuRow({ symbol: "", shares: 0, month: 12, price: 0, currency: "USD" }));
     $("#btnCalc").addEventListener("click", calculateAndRender);
     $("#btnSave").addEventListener("click", save);
+    $("#btnExportImage").addEventListener("click", exportScreenshot);
     $("#btnReset").addEventListener("click", reset);
     $("#btnFetchFx").addEventListener("click", fetchFx);
     $("#housingType").addEventListener("change", toggleRentTier);
@@ -425,6 +426,70 @@
   function save() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(snapshot()));
     toast("已保存到本地", "success");
+  }
+
+  async function exportScreenshot() {
+    const results = $("#results");
+    if (results.querySelector(".placeholder")) {
+      toast("请先点击「计算结果」", "error");
+      return;
+    }
+    if (typeof html2canvas !== "function") {
+      toast("截图库未加载，请检查网络", "error");
+      return;
+    }
+
+    toast("正在生成截图…", "success");
+
+    const now = new Date();
+    const year = $("#taxYear").value;
+    const wrapper = document.createElement("div");
+    wrapper.style.cssText = `
+      position: fixed; left: -10000px; top: 0;
+      width: ${results.offsetWidth}px;
+      background: #0e1116;
+      padding: 24px;
+      box-sizing: border-box;
+      font-family: -apple-system, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      color: #e6edf3;
+    `;
+    const header = document.createElement("div");
+    header.style.cssText = `
+      display: flex; justify-content: space-between; align-items: baseline;
+      font-size: 18px; font-weight: 600;
+      border-bottom: 1px solid #2a3340; padding-bottom: 12px; margin-bottom: 16px;
+    `;
+    header.innerHTML = `
+      <span>年度收入测算 · ${year} 年</span>
+      <span style="color:#8b949e;font-weight:normal;font-size:13px;">${now.toLocaleString("zh-CN")}</span>
+    `;
+    const clone = results.cloneNode(true);
+    wrapper.appendChild(header);
+    wrapper.appendChild(clone);
+    document.body.appendChild(wrapper);
+
+    try {
+      const canvas = await html2canvas(wrapper, {
+        backgroundColor: "#0e1116",
+        scale: 2,
+        useCORS: true,
+        logging: false,
+        windowWidth: wrapper.scrollWidth,
+        windowHeight: wrapper.scrollHeight
+      });
+      const pad = (n) => String(n).padStart(2, "0");
+      const stamp = `${now.getFullYear()}${pad(now.getMonth() + 1)}${pad(now.getDate())}_${pad(now.getHours())}${pad(now.getMinutes())}`;
+      const link = document.createElement("a");
+      link.download = `年度收入_${year}_${stamp}.png`;
+      link.href = canvas.toDataURL("image/png");
+      link.click();
+      toast("截图已下载", "success");
+    } catch (error) {
+      console.error(error);
+      toast("截图失败：" + error.message, "error");
+    } finally {
+      document.body.removeChild(wrapper);
+    }
   }
 
   function restore() {
