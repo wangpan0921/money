@@ -3,228 +3,173 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>我今年挣了多少钱</title>
-  <link rel="stylesheet" href="styles.css" />
+  <title>Agent 工坊 · 小应用集</title>
+  <meta name="description" content="一个人 + 一个 Agent,在这间小工坊里做的小东西。" />
+  <style>
+    :root {
+      --bg: #0e1116;
+      --panel: #161b22;
+      --panel-2: #1c232c;
+      --border: #2a3340;
+      --border-strong: #3a4452;
+      --text: #e6edf3;
+      --muted: #8b949e;
+      --primary: #2f81f7;
+      --accent: #a371f7;
+      --radius: 10px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      font-size: 15px;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    .page {
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 64px 24px 48px;
+    }
+
+    header.hero {
+      margin-bottom: 48px;
+    }
+    header.hero h1 {
+      margin: 0 0 12px;
+      font-size: 32px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+    header.hero p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 15px;
+      max-width: 640px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 18px;
+    }
+
+    .card {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding: 22px;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      transition: transform 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+      min-height: 200px;
+    }
+
+    .card:not(.placeholder):hover {
+      transform: translateY(-2px);
+      border-color: var(--primary);
+      background: var(--panel-2);
+    }
+
+    .card .icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      background: var(--panel-2);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+    }
+
+    .card h2 {
+      margin: 0;
+      font-size: 17px;
+      font-weight: 600;
+    }
+
+    .card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.55;
+      flex: 1;
+    }
+
+    .card .cta {
+      font-size: 13px;
+      color: var(--primary);
+      font-weight: 500;
+      margin-top: 4px;
+    }
+
+    .card.placeholder {
+      cursor: default;
+      border-style: dashed;
+      background: transparent;
+    }
+    .card.placeholder .icon {
+      opacity: 0.5;
+    }
+    .card.placeholder h2,
+    .card.placeholder p {
+      color: var(--muted);
+    }
+
+    footer.foot {
+      margin-top: 64px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 12px;
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    @media (max-width: 480px) {
+      .page { padding: 40px 18px 32px; }
+      header.hero h1 { font-size: 26px; }
+    }
+  </style>
 </head>
 <body>
-  <header class="topbar">
-    <h1>我今年挣了多少钱 <span class="muted">· 中国个税计算</span></h1>
-    <div class="actions">
-      <label>计税年度
-        <select id="taxYear">
-          <option>2026</option>
-          <option>2025</option>
-          <option>2024</option>
-        </select>
-      </label>
-      <button id="btnReset" class="btn-ghost">清空</button>
-      <button id="btnSave" class="btn-ghost">保存到本地</button>
-      <button id="btnExportImage" class="btn-ghost">导出截图</button>
-    </div>
-  </header>
+  <div class="page">
+    <header class="hero">
+      <h1>Agent 工坊</h1>
+      <p>一个人 + 一个 Agent,在这间小工坊里做的小东西。每个格子是一个能用的小应用。</p>
+    </header>
 
-  <main class="layout">
-    <!-- 左侧:输入区 -->
-    <section class="panel inputs">
-      <!-- 1. 基础设置 -->
-      <details open>
-        <summary>① 基础设置(社保 / 公积金 / 专项附加扣除)</summary>
-        <div class="form-grid">
-          <label>社保缴费基数(月)
-            <input type="number" id="siBase" value="20000" min="0" step="100" />
-          </label>
-          <label>公积金缴费基数(月)
-            <input type="number" id="hfBase" value="20000" min="0" step="100" />
-          </label>
-          <label>养老 个人比例 <span class="hint">默认 8%</span>
-            <input type="number" id="rateEndowment" value="8" min="0" max="20" step="0.1" />
-          </label>
-          <label>医疗 个人比例 <span class="hint">默认 2%</span>
-            <input type="number" id="rateMedical" value="2" min="0" max="10" step="0.1" />
-          </label>
-          <label>失业 个人比例 <span class="hint">默认 0.5%</span>
-            <input type="number" id="rateUnemp" value="0.5" min="0" max="5" step="0.1" />
-          </label>
-          <label>公积金 个人比例 <span class="hint">5%–12%</span>
-            <input type="number" id="rateHf" value="12" min="0" max="20" step="0.5" />
-          </label>
-        </div>
+    <main class="grid">
+      <a class="card" href="apps/income/">
+        <div class="icon" aria-hidden="true">💰</div>
+        <h2>我今年挣了多少钱</h2>
+        <p>中国个税计算器。支持累计预扣预缴、专项附加扣除、年终奖最优计税、RSU/期权/ESPP。纯前端,数据不上传。</p>
+        <span class="cta">打开 →</span>
+      </a>
 
-        <h4 class="section-title">专项附加扣除</h4>
-        <div class="form-grid">
-          <label>子女教育人数
-            <select id="childCount">
-              <option value="0">无</option>
-              <option value="1">1 个子女</option>
-              <option value="2">2 个子女</option>
-              <option value="3">3 个子女</option>
-            </select>
-          </label>
-          <label>子女教育扣除比例
-            <select id="childShare">
-              <option value="1">本人 100%</option>
-              <option value="0.5">夫妻各 50%</option>
-            </select>
-          </label>
-          <label>3岁以下婴幼儿人数
-            <select id="infantCount">
-              <option value="0">无</option>
-              <option value="1">1 个婴幼儿</option>
-              <option value="2">2 个婴幼儿</option>
-              <option value="3">3 个婴幼儿</option>
-            </select>
-          </label>
-          <label>婴幼儿照护扣除比例
-            <select id="infantShare">
-              <option value="1">本人 100%</option>
-              <option value="0.5">夫妻各 50%</option>
-            </select>
-          </label>
-          <label>继续教育
-            <select id="educationType">
-              <option value="0">无</option>
-              <option value="400">学历继续教育：400/月</option>
-              <option value="300">职业资格：3600/年</option>
-            </select>
-          </label>
-          <label>住房扣除类型
-            <select id="housingType">
-              <option value="0">无</option>
-              <option value="mortgage">住房贷款利息：1000/月</option>
-              <option value="rent">住房租金</option>
-            </select>
-          </label>
-          <label>住房租金城市档位
-            <select id="rentTier">
-              <option value="1500">直辖市/省会/计划单列市：1500/月</option>
-              <option value="1100">市辖区户籍人口超 100 万：1100/月</option>
-              <option value="800">市辖区户籍人口不超 100 万：800/月</option>
-            </select>
-          </label>
-          <label>赡养老人
-            <select id="elderType">
-              <option value="0">无</option>
-              <option value="3000">独生子女：3000/月</option>
-              <option value="1500">非独生子女：本人分摊 1500/月</option>
-              <option value="1000">非独生子女：本人分摊 1000/月</option>
-              <option value="750">非独生子女：本人分摊 750/月</option>
-              <option value="600">非独生子女：本人分摊 600/月</option>
-              <option value="500">非独生子女：本人分摊 500/月</option>
-            </select>
-          </label>
-          <label>大病医疗可扣除额(年度)
-            <select id="medicalAnnualDeduction">
-              <option value="0">无</option>
-              <option value="10000">10000/年</option>
-              <option value="20000">20000/年</option>
-              <option value="30000">30000/年</option>
-              <option value="40000">40000/年</option>
-              <option value="50000">50000/年</option>
-              <option value="60000">60000/年</option>
-              <option value="70000">70000/年</option>
-              <option value="80000">80000/年</option>
-            </select>
-          </label>
-        </div>
-        <p class="hint">※ 住房贷款利息和住房租金不能同时享受；选择“住房租金”时才使用城市档位。</p>
-      </details>
-
-      <!-- 2. 月度工资 -->
-      <details open>
-        <summary>② 月度工资</summary>
-        <div class="form-row">
-          <label>默认月薪(应发税前)
-            <input type="number" id="defaultSalary" value="30000" min="0" step="1000" />
-          </label>
-          <button id="btnFillSalary" class="btn-secondary">应用到 12 个月</button>
-        </div>
-        <div id="monthGrid" class="month-grid"></div>
-      </details>
-
-      <!-- 3. 年终奖 -->
-      <details open>
-        <summary>③ 年终奖</summary>
-        <div class="form-row">
-          <label>输入方式
-            <select id="bonusMode">
-              <option value="amount">直接输入总额</option>
-              <option value="multiplier">按月薪 N 倍计算</option>
-            </select>
-          </label>
-          <label id="bonusAmountWrap">年终奖总额
-            <input type="number" id="bonusAmount" value="0" min="0" step="1000" />
-          </label>
-          <label id="bonusMultWrap" hidden>倍数 N(× 平均月薪)
-            <input type="number" id="bonusMultiplier" value="3" min="0" step="0.5" />
-          </label>
-          <div id="bonusComputedWrap" class="computed-field" hidden>
-            <span>年终奖总额</span>
-            <strong id="bonusComputedAmount">¥0</strong>
-          </div>
-          <label>计税方式
-            <select id="bonusTaxMode">
-              <option value="separate">单独计税(全年一次性奖金)</option>
-              <option value="combined">并入综合所得计税</option>
-              <option value="auto">自动选择最优</option>
-            </select>
-          </label>
-          <label>发放月份
-            <input type="number" id="bonusMonth" value="12" min="1" max="12" />
-          </label>
-        </div>
-        <p class="hint">※ 全年一次性奖金单独计税政策延续至 2027 年底。"自动选择最优"会比较两种算法,采用税额较低者。</p>
-      </details>
-
-      <!-- 4. 公司股票 -->
-      <details open>
-        <summary>④ 公司股票(RSU / 期权 / ESPP)</summary>
-        <div class="form-row">
-          <div class="computed-field">
-            <span>USD/CNY 汇率</span>
-            <strong id="fxRateText" data-value="7.20">7.20</strong>
-          </div>
-          <div class="computed-field">
-            <span>HKD/CNY 汇率</span>
-            <strong id="fxHkdText" data-value="0.92">0.92</strong>
-          </div>
-          <button id="btnFetchFx" class="btn-secondary" type="button">刷新汇率</button>
-          <label>计税方式
-            <select id="rsuTaxMode">
-              <option value="combined">并入归属当月综合所得</option>
-              <option value="separate">单独按全年一次性奖金计税</option>
-            </select>
-          </label>
-        </div>
-        <div id="rsuList"></div>
-        <button id="btnAddRsu" class="btn-secondary">+ 添加股票归属</button>
-      </details>
-
-      <button id="btnCalc" class="btn-primary">计算结果</button>
-    </section>
-
-    <!-- 右侧:结果区 -->
-    <section class="panel results" id="results">
-      <div class="placeholder">
-        <p>填好左侧信息后点 <strong>计算结果</strong>,这里会显示:</p>
-        <ul>
-          <li>年度总收入(分项)</li>
-          <li>到手实际金额</li>
-          <li>各类税费明细(个税 / 社保 / 公积金)</li>
-          <li>12 个月逐月明细表</li>
-          <li>年终奖最优计税方式建议</li>
-        </ul>
+      <div class="card placeholder" aria-disabled="true">
+        <div class="icon" aria-hidden="true">✨</div>
+        <h2>下一个小应用</h2>
+        <p>陆续会有新格子被填上。</p>
       </div>
-    </section>
-  </main>
+    </main>
 
-  <footer class="foot">
-    <p class="muted">仅供参考,不构成税务意见。社保 / 公积金存在缴费基数上下限,请按实际城市政策核对。</p>
-  </footer>
-
-  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
-  <script src="js/tax.js"></script>
-  <script src="js/stock.js"></script>
-  <script src="js/tracker.js"></script>
-  <script src="js/app.js"></script>
+    <footer class="foot">
+      <span>© Agent 工坊</span>
+      <span>由一个人和他的 Agent 共同打造</span>
+    </footer>
+  </div>
 </body>
 </html>

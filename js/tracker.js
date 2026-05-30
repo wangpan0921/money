@@ -1,5 +1,7 @@
 (function () {
-  const ENDPOINT = "api/track.php";        // 相对路径，部署在同域下
+  // 统一指向站点根目录下的 api/,这样不管 tracker.js 被哪一层的子应用引用,
+  // 请求都会落到同一个后端。
+  const ENDPOINT = new URL("/api/track.php", location.href).toString();
   const GEO_ENDPOINT = "https://ipapi.co/json/";
   const GEO_CACHE_KEY = "geo-cache-v1";
   const GEO_TTL_MS = 24 * 60 * 60 * 1000;  // 缓存 24 小时，避免触发 ipapi 限频
