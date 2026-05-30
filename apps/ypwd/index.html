@@ -3,76 +3,236 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>密码管理器下载</title>
+    <title>我的密码我自己管 · Agent 工坊</title>
+    <meta name="description" content="一个小小的 Android 密码管理器,APK 直接下载安装。" />
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            max-width: 800px;
+        :root {
+            --bg: #0e1116;
+            --panel: #161b22;
+            --panel-2: #1c232c;
+            --border: #2a3340;
+            --border-strong: #3a4452;
+            --text: #e6edf3;
+            --muted: #8b949e;
+            --primary: #2f81f7;
+            --primary-hover: #4a96fa;
+            --accent: #a371f7;
+            --radius: 10px;
+        }
+
+        * { box-sizing: border-box; }
+
+        html, body {
+            margin: 0;
+            padding: 0;
+            background: var(--bg);
+            color: var(--text);
+            font-family: -apple-system, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+            font-size: 15px;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        a { color: inherit; text-decoration: none; }
+
+        .page {
+            max-width: 720px;
             margin: 0 auto;
-            padding: 20px;
-            text-align: center;
+            padding: 48px 24px 48px;
         }
-        .download-card {
-            background: #f5f5f5;
-            border-radius: 10px;
-            padding: 30px;
-            margin: 20px 0;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-        .download-btn {
+
+        .back {
             display: inline-block;
-            background: #007bff;
-            color: white;
-            padding: 15px 30px;
-            text-decoration: none;
-            border-radius: 5px;
+            color: var(--muted);
+            font-size: 13px;
+            margin-bottom: 24px;
+            transition: color 0.15s ease;
+        }
+        .back:hover { color: var(--text); }
+
+        header.hero {
+            margin-bottom: 32px;
+        }
+        header.hero h1 {
+            margin: 0 0 12px;
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+        header.hero p {
+            margin: 0;
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        .panel {
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 28px;
+            margin-bottom: 20px;
+        }
+
+        .panel h2 {
+            margin: 0 0 8px;
             font-size: 18px;
-            margin: 10px;
-            transition: background 0.3s;
+            font-weight: 600;
         }
-        .download-btn:hover {
-            background: #0056b3;
+        .panel .lead {
+            margin: 0 0 20px;
+            color: var(--muted);
+            font-size: 14px;
         }
-        .app-info {
-            text-align: left;
-            margin: 20px 0;
+
+        .meta {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 12px;
+            margin: 0 0 24px;
+            padding: 16px;
+            background: var(--panel-2);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+        }
+        .meta-item {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+        .meta-item .k {
+            color: var(--muted);
+            font-size: 12px;
+        }
+        .meta-item .v {
+            color: var(--text);
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .download-row {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .btn-primary {
+            display: inline-block;
+            background: var(--primary);
+            color: #fff;
+            border: 1px solid var(--primary);
+            border-radius: 8px;
+            padding: 12px 22px;
+            font-size: 15px;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            transition: background 0.15s ease, border-color 0.15s ease;
+        }
+        .btn-primary:hover {
+            background: var(--primary-hover);
+            border-color: var(--primary-hover);
+        }
+
+        .count {
+            color: var(--muted);
+            font-size: 13px;
+        }
+        .count strong {
+            color: var(--text);
+            font-weight: 600;
+        }
+
+        .panel.tips h2 {
+            font-size: 15px;
+        }
+        .panel.tips p {
+            margin: 6px 0;
+            color: var(--muted);
+            font-size: 13px;
+        }
+        .panel.tips code {
+            background: var(--panel-2);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: 1px 6px;
+            font-size: 12px;
+            color: var(--text);
+        }
+
+        footer.foot {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
+            color: var(--muted);
+            font-size: 12px;
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        @media (max-width: 480px) {
+            .page { padding: 32px 18px 32px; }
+            header.hero h1 { font-size: 24px; }
+            .panel { padding: 20px; }
         }
     </style>
 </head>
 <body>
-    <h1>我的APP下载</h1>
-    
-    <div class="download-card">
-        <h2>密码管理器</h2>
-        <p>最新版本，优化用户体验，修复已知问题</p>
-        
-        <div class="app-info">
-            <h3>应用信息：</h3>
-            <ul>
-                <li>版本：1.0</li>
-                <li>大小：3.8 MB</li>
-                <li>更新日期：2025年12月</li>
-                <li>支持系统：Android 14</li>
-            </ul>
-        </div>
+    <div class="page">
+        <a class="back" href="../../">← 回到 Agent 工坊</a>
 
-        <a href="download/YPwd.apk" class="download-btn" id="downloadLink" download="密码管理器.apk">
-            立即下载 APK (v1.0)
-        </a>
-        
-        <div style="margin-top: 15px; color: #666; font-size: 14px;">
-            <p>下载次数：<span id="downloadCount">0</span></p>
-        </div>
-    </div>
+        <header class="hero">
+            <h1>我的密码我自己管</h1>
+            <p>一个小小的 Android 密码管理器,APK 直接下载安装。</p>
+        </header>
 
-    <div style="margin-top: 30px;">
-        <h3>安装说明</h3>
-        <p>下载完成后，点击APK文件进行安装</p>
-        <p>如果提示"禁止安装未知来源应用"，请前往设置中允许安装未知来源应用</p>
+        <section class="panel">
+            <h2>密码管理器</h2>
+            <p class="lead">最新版本,优化用户体验,修复已知问题。</p>
+
+            <div class="meta">
+                <div class="meta-item">
+                    <span class="k">版本</span>
+                    <span class="v">v1.0</span>
+                </div>
+                <div class="meta-item">
+                    <span class="k">大小</span>
+                    <span class="v">3.8 MB</span>
+                </div>
+                <div class="meta-item">
+                    <span class="k">更新日期</span>
+                    <span class="v">2025 年 12 月</span>
+                </div>
+                <div class="meta-item">
+                    <span class="k">支持系统</span>
+                    <span class="v">Android 14</span>
+                </div>
+            </div>
+
+            <div class="download-row">
+                <a href="download/YPwd.apk" class="btn-primary" id="downloadLink" download="密码管理器.apk">
+                    立即下载 APK (v1.0)
+                </a>
+                <span class="count">下载次数:<strong id="downloadCount">0</strong></span>
+            </div>
+        </section>
+
+        <section class="panel tips">
+            <h2>安装说明</h2>
+            <p>下载完成后,点击 APK 文件进行安装。</p>
+            <p>如果提示 <code>禁止安装未知来源应用</code>,请前往设置中允许安装未知来源应用。</p>
+        </section>
+
+        <footer class="foot">
+            <span>© Agent 工坊</span>
+            <span>由一个人和他的 Agent 共同打造</span>
+        </footer>
     </div>
 
     <script>
-        // 页面加载时，获取并显示总下载次数
+        // 页面加载时,获取并显示总下载次数
         function loadDownloadCount() {
             fetch('get_count.php')
                 .then(response => response.text())
@@ -85,9 +245,8 @@
                 });
         }
 
-        // 为下载链接绑定点击事件，触发统计
+        // 为下载链接绑定点击事件,触发统计
         document.getElementById('downloadLink').addEventListener('click', function(e) {
-            // 可选：延迟一点开始下载，确保统计请求先发出
             e.preventDefault(); // 先阻止默认跳转
             const downloadUrl = this.href;
 
@@ -97,21 +256,17 @@
                 .then(newTotal => {
                     document.getElementById('downloadCount').textContent = newTotal;
 
-                    // +++ 方案A：创建隐藏的a标签并模拟点击（推荐，兼容性最好） +++
+                    // 创建隐藏的 a 标签并模拟点击,触发下载
                     const link = document.createElement('a');
                     link.href = downloadUrl;
-                    link.download = '密码管理器.apk'; // 可选：指定下载后的文件名
-                    link.style.display = 'none'; // 隐藏这个元素
-                    document.body.appendChild(link); // 需要先将元素添加到DOM
-                    link.click(); // 模拟用户点击
-                    document.body.removeChild(link); // 点击后移除元素
-                    // +++ 方案A结束 +++
-
-                    // 注意：方案A和方案B二选一即可，不要同时使用
+                    link.download = '密码管理器.apk';
+                    link.style.display = 'none';
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
                 })
                 .catch(err => {
-                    console.error('统计失败，但仍继续下载:', err);
-                    // 即使统计失败，也通过方案A确保用户能下载
+                    console.error('统计失败,但仍继续下载:', err);
                     const link = document.createElement('a');
                     link.href = downloadUrl;
                     link.download = '密码管理器.apk';
