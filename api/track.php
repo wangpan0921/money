@@ -16,7 +16,14 @@ $raw = file_get_contents('php://input');
 $payload = json_decode($raw ?: '{}', true);
 if (!is_array($payload)) $payload = [];
 
-$allowed = ['calculate', 'export_image', 'save_local'];
+$allowed = [
+    // income 子应用
+    'calculate', 'export_image', 'save_local',
+    // 主页
+    'home_view',
+    'home_click_income',
+    'home_click_ypwd',
+];
 $type = $payload['event_type'] ?? '';
 if (!in_array($type, $allowed, true)) {
     http_response_code(400);

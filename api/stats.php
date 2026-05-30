@@ -22,6 +22,19 @@ $summary = $pdo->query(
      ORDER BY n DESC"
 )->fetchAll();
 
+// 主页专项:浏览次数 + 各子应用点击次数(全量,不限时间窗口)
+$homeView = (int) $pdo->query(
+    "SELECT COUNT(*) FROM usage_events WHERE event_type = 'home_view'"
+)->fetchColumn();
+
+$homeClicks = $pdo->query(
+    "SELECT SUBSTRING(event_type, 12) AS app, COUNT(*) AS n
+     FROM usage_events
+     WHERE event_type LIKE 'home_click_%'
+     GROUP BY app
+     ORDER BY n DESC"
+)->fetchAll();
+
 $daily = $pdo->query(
     "SELECT DATE(created_at) AS d, event_type, COUNT(*) AS n
      FROM usage_events
@@ -80,6 +93,20 @@ function h($v): string {
 <body>
 <h1>使用统计</h1>
 <p class="muted">生成时间 <?= h(date('Y-m-d H:i:s')) ?></p>
+
+<h2>主页(全量累计)</h2>
+<table>
+  <tr><th>指标</th><th>次数</th></tr>
+  <tr><td>主页访问 <code>home_view</code></td><td><?= h($homeView) ?></td></tr>
+  <?php foreach ($homeClicks as $r): ?>
+    <tr>
+      <td>点击子应用 <code><?= h($r['app']) ?></code></td>
+      <td><?= h($r['n']) ?></td>
+    </tr>
+  <?php endforeach; if (!$homeClicks): ?>
+    <tr><td class="muted" colspan="2">暂无子应用点击数据</td></tr>
+  <?php endif; ?>
+</table>
 
 <h2>近 7 天事件汇总</h2>
 <table>

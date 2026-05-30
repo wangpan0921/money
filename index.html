@@ -152,14 +152,14 @@
     </header>
 
     <main class="grid">
-      <a class="card" href="apps/income/">
+      <a class="card" href="apps/income/" data-app="income">
         <div class="icon" aria-hidden="true">💰</div>
         <h2>我今年挣了多少钱</h2>
         <p>中国个税计算器。支持累计预扣预缴、专项附加扣除、年终奖最优计税、RSU/期权/ESPP。纯前端,数据不上传。</p>
         <span class="cta">打开 →</span>
       </a>
 
-      <a class="card" href="apps/ypwd/">
+      <a class="card" href="apps/ypwd/" data-app="ypwd">
         <div class="icon" aria-hidden="true">🔐</div>
         <h2>我的密码我自己管</h2>
         <p>Android 端的小密码管理器,APK 直接下载安装。版本 v1.1,体积 3.8 MB,支持 Android 14。</p>
@@ -172,5 +172,30 @@
       <span>由一个人和他的 Agent 共同打造</span>
     </footer>
   </div>
+
+  <script src="js/tracker.js"></script>
+  <script>
+    (function () {
+      if (!window.Tracker) return;
+
+      // 1) 进入主页计一次
+      Tracker.track('home_view');
+
+      // 2) 每张卡片点击各计一次
+      // 用 pointerdown 比 click 更早触发,配合 tracker 内部 fetch 的 keepalive,
+      // 能最大限度保证导航离开时埋点请求已经发出。
+      document.querySelectorAll('.card[data-app]').forEach(function (card) {
+        var sent = false;
+        var fire = function () {
+          if (sent) return;
+          sent = true;
+          Tracker.track('home_click_' + card.dataset.app);
+        };
+        card.addEventListener('pointerdown', fire);
+        // 兜底:键盘 Enter / 不支持 pointer 事件的环境
+        card.addEventListener('click', fire);
+      });
+    })();
+  </script>
 </body>
 </html>
