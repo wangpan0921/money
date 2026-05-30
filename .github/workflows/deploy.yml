@@ -1,0 +1,50 @@
+name: Deploy to InfinityFree
+
+# 触发条件:
+# - 推到 main 时自动部署(忽略纯文档/SQL/Markdown 的变更,这些不上线)
+# - 手动从 Actions 页面点 "Run workflow" 也能部署
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - 'doc/**'
+      - 'sql/**'
+      - '**.md'
+  workflow_dispatch:
+
+# 同一分支上有多个 deploy 时,只跑最新那个,前面的取消掉
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Sync to InfinityFree via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          # 这三个值放在 GitHub 仓库 Settings → Secrets and variables → Actions
+          server:   ${{ secrets.FTP_SERVER }}      # 通常是 ftpupload.net
+          username: ${{ secrets.FTP_USERNAME }}    # InfinityFree 控制面板里的 FTP 用户名
+          password: ${{ secrets.FTP_PASSWORD }}    # 同上,FTP 密码
+          # InfinityFree 的网站根目录就是 /htdocs/,文件会同步到这里
+          server-dir: /htdocs/
+          # 增量同步:Action 在服务器上维护 .ftp-deploy-sync-state.json,
+          # 只上传变更的文件,服务器上它没上传过的文件不会被动它(比如手动放的 api/config.php)
+          exclude: |
+            **/.git*
+            **/.git*/**
+            .github/**
+            doc/**
+            sql/**
+            apps/ypwd/website/**
+            api/config.php
+            api/config.example.php
+            **/.DS_Store
+            **/*.swp
+            **/Thumbs.db
+            README*
