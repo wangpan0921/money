@@ -1,0 +1,15 @@
+# 让 .sh 文件以 text/plain 内联返回,而不是被强制当作下载附件
+# 这样浏览器里 "查看 raw" 能直接看到内容,fetch() 也能正常拿到脚本文本
+AddType text/plain .sh
+
+# Header 指令依赖 mod_headers,InfinityFree 没启用时不报 500,只是
+# 退化成"靠 AddType 改 MIME"。前端那边还有 Blob URL 兜底,无所谓。
+<IfModule mod_headers.c>
+    <FilesMatch "\.sh$">
+        # 显式声明 inline,覆盖任何默认的 attachment
+        Header set Content-Type "text/plain; charset=UTF-8"
+        Header set Content-Disposition "inline"
+        # 允许浏览器缓存,但每次都验证一下,避免脚本更新后用户拿到旧版
+        Header set Cache-Control "public, max-age=0, must-revalidate"
+    </FilesMatch>
+</IfModule>

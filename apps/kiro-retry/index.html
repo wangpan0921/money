@@ -295,7 +295,7 @@
                 <button type="button" id="copyBtn" class="btn btn-ghost">
                     📋 复制全部
                 </button>
-                <a class="btn btn-ghost" href="kiro-agent-retry.sh" target="_blank" rel="noopener">
+                <a id="rawLink" class="btn btn-ghost" href="kiro-agent-retry.sh" target="_blank" rel="noopener">
                     查看 raw
                 </a>
             </div>
@@ -342,14 +342,18 @@ scripts/kiro-agent-retry.sh --pick "继续"</pre>
     <script>
         (function () {
             var SCRIPT_URL = 'kiro-agent-retry.sh';
+            var FILE_NAME = 'kiro-agent-retry.sh';
             var codeBlock = document.getElementById('codeBlock');
             var codeStatus = document.getElementById('codeStatus');
             var metaSize = document.getElementById('metaSize');
             var metaLines = document.getElementById('metaLines');
             var copyBtn = document.getElementById('copyBtn');
             var downloadLink = document.getElementById('downloadLink');
+            var rawLink = document.getElementById('rawLink');
 
             var scriptText = '';
+            var blobUrlDownload = '';
+            var blobUrlRaw = '';
 
             function escapeHtml(s) {
                 return s.replace(/[&<>]/g, function (ch) {
@@ -388,13 +392,41 @@ scripts/kiro-agent-retry.sh --pick "继续"</pre>
                 return (bytes / 1024 / 1024).toFixed(2) + ' MB';
             }
 
+            // 拿到脚本文本后,把"下载"和"查看 raw"切到 Blob URL,
+            // 这样彻底脱离服务器对 .sh 的 Content-Disposition / MIME 处理。
+            function rewireLinksToBlob(text) {
+                try {
+                    // 下载用 octet-stream + download 属性,确保是"另存为"
+                    var dlBlob = new Blob([text], { type: 'application/octet-stream' });
+                    blobUrlDownload = URL.createObjectURL(dlBlob);
+                    downloadLink.href = blobUrlDownload;
+                    downloadLink.setAttribute('download', FILE_NAME);
+
+                    // 查看 raw 用 text/plain,新窗口打开就是纯文本预览
+                    var rawBlob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+                    blobUrlRaw = URL.createObjectURL(rawBlob);
+                    rawLink.href = blobUrlRaw;
+                    // raw 不需要 download
+                    rawLink.removeAttribute('download');
+                } catch (_) {
+                    // Blob 不可用就保持原始 href,至少还能用
+                }
+            }
+
             function loadScript() {
-                fetch(SCRIPT_URL, { cache: 'no-cache' })
+                // 加 cache-buster,避开 InfinityFree 的边缘缓存
+                var url = SCRIPT_URL + '?t=' + Date.now();
+                fetch(url, { cache: 'no-store', credentials: 'same-origin' })
                     .then(function (res) {
                         if (!res.ok) throw new Error('HTTP ' + res.status);
                         return res.text();
                     })
                     .then(function (text) {
+                        // 简单校验:正常脚本应以 #! 开头。如果服务器返回的是
+                        // HTML 拦截页或其它内容,直接走失败分支。
+                        if (!/^#!/.test(text)) {
+                            throw new Error('返回内容不是 shell 脚本');
+                        }
                         scriptText = text;
                         codeBlock.innerHTML = renderHighlighted(text);
 
@@ -402,9 +434,13 @@ scripts/kiro-agent-retry.sh --pick "继续"</pre>
                         metaSize.textContent = humanSize(bytes);
                         metaLines.textContent = text.split('\n').length + ' 行';
                         codeStatus.textContent = '已加载';
+
+                        rewireLinksToBlob(text);
                     })
                     .catch(function (err) {
-                        codeBlock.innerHTML = '<span class="err">加载失败:' + escapeHtml(String(err.message || err)) + '。可点击上方"下载脚本"或"查看 raw"获取。</span>';
+                        codeBlock.innerHTML = '<span class="err">脚本预览加载失败:' +
+                            escapeHtml(String(err.message || err)) +
+                            '。可点击上方"下载脚本"获取文件。</span>';
                         codeStatus.textContent = '加载失败';
                     });
             }
