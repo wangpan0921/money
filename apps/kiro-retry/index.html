@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kiro Agent 自动重试脚本 · Agent 工坊</title>
+    <meta name="description" content="kiro-cli chat 的非交互式包装脚本,出错就自动重试,边跑边看进度。" />
+    <style>
+        :root {
+            --bg: #0e1116;
+            --panel: #161b22;
+            --panel-2: #1c232c;
+            --border: #2a3340;
+            --border-strong: #3a4452;
+            --text: #e6edf3;
+            --muted: #8b949e;
+            --primary: #2f81f7;
+            --primary-hover: #4a96fa;
+            --accent: #a371f7;
+            --green: #3fb950;
+            --radius: 10px;
+        }
+
+        * { box-sizing: border-box; }
+
+        html, body {
+            margin: 0;
+            padding: 0;
+            background: var(--bg);
+            color: var(--text);
+            font-family: -apple-system, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+            font-size: 15px;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        a { color: inherit; text-decoration: none; }
+
+        .page {
+            max-width: 880px;
+            margin: 0 auto;
+            padding: 48px 24px 48px;
+        }
+
+        .back {
+            display: inline-block;
+            color: var(--muted);
+            font-size: 13px;
+            margin-bottom: 24px;
+            transition: color 0.15s ease;
+        }
+        .back:hover { color: var(--text); }
+
+        header.hero {
+            margin-bottom: 32px;
+        }
+        header.hero h1 {
+            margin: 0 0 12px;
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+        header.hero p {
+            margin: 0;
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        .panel {
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 24px;
+            margin-bottom: 18px;
+        }
+
+        .panel h2 {
+            margin: 0 0 8px;
+            font-size: 18px;
+            font-weight: 600;
+        }
+        .panel .lead {
+            margin: 0 0 18px;
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        .meta {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 12px;
+            margin: 0 0 20px;
+            padding: 16px;
+            background: var(--panel-2);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+        }
+        .meta-item {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+        .meta-item .k {
+            color: var(--muted);
+            font-size: 12px;
+        }
+        .meta-item .v {
+            color: var(--text);
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .actions {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .btn {
+            display: inline-block;
+            border-radius: 8px;
+            padding: 10px 18px;
+            font-size: 14px;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+            border: 1px solid transparent;
+            user-select: none;
+        }
+        .btn-primary {
+            background: var(--primary);
+            color: #fff;
+            border-color: var(--primary);
+        }
+        .btn-primary:hover {
+            background: var(--primary-hover);
+            border-color: var(--primary-hover);
+        }
+        .btn-ghost {
+            background: transparent;
+            color: var(--text);
+            border-color: var(--border-strong);
+        }
+        .btn-ghost:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+        .btn-ghost.ok {
+            color: var(--green);
+            border-color: var(--green);
+        }
+
+        /* 代码查看区 */
+        .code-wrap {
+            background: var(--panel-2);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .code-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 14px;
+            border-bottom: 1px solid var(--border);
+            background: #11161d;
+            color: var(--muted);
+            font-size: 12px;
+            font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+        }
+        .code-head .file {
+            color: var(--text);
+        }
+        .code-scroll {
+            max-height: 560px;
+            overflow: auto;
+        }
+        pre.code {
+            margin: 0;
+            padding: 14px 16px;
+            font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Microsoft YaHei Mono", monospace;
+            font-size: 12.5px;
+            line-height: 1.6;
+            color: var(--text);
+            white-space: pre;
+            tab-size: 4;
+        }
+        pre.code .line {
+            display: block;
+        }
+        pre.code .ln {
+            display: inline-block;
+            width: 3em;
+            margin-right: 14px;
+            text-align: right;
+            color: #4a5564;
+            user-select: none;
+        }
+        pre.code .cmt { color: #7d8590; }
+        pre.code .shebang { color: var(--accent); }
+
+        .panel.tips p {
+            margin: 6px 0;
+            color: var(--muted);
+            font-size: 13px;
+        }
+        .panel.tips code {
+            background: var(--panel-2);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: 1px 6px;
+            font-size: 12px;
+            color: var(--text);
+            font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+        }
+        .panel.tips pre {
+            background: var(--panel-2);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 10px 12px;
+            margin: 8px 0;
+            font-size: 12.5px;
+            color: var(--text);
+            font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+            overflow-x: auto;
+        }
+
+        .loading, .err {
+            color: var(--muted);
+            font-size: 13px;
+            padding: 12px 16px;
+        }
+        .err { color: #f85149; }
+
+        footer.foot {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
+            color: var(--muted);
+            font-size: 12px;
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        @media (max-width: 480px) {
+            .page { padding: 32px 18px 32px; }
+            header.hero h1 { font-size: 24px; }
+            .panel { padding: 18px; }
+            pre.code { font-size: 11.5px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="page">
+        <a class="back" href="../../">← 回到 Agent 工坊</a>
+
+        <header class="hero">
+            <h1>Kiro Agent 自动重试脚本</h1>
+            <p>kiro-cli chat 的非交互式包装,出错自动重试,边跑边看进度。</p>
+        </header>
+
+        <section class="panel">
+            <h2>kiro-agent-retry.sh</h2>
+            <p class="lead">监控 <code>kiro-cli chat</code>,命中常见错误就自动重试,支持续跑最近一次会话或交互式选会话。</p>
+
+            <div class="meta">
+                <div class="meta-item">
+                    <span class="k">文件名</span>
+                    <span class="v">kiro-agent-retry.sh</span>
+                </div>
+                <div class="meta-item">
+                    <span class="k">大小</span>
+                    <span class="v" id="metaSize">—</span>
+                </div>
+                <div class="meta-item">
+                    <span class="k">行数</span>
+                    <span class="v" id="metaLines">—</span>
+                </div>
+                <div class="meta-item">
+                    <span class="k">环境要求</span>
+                    <span class="v">bash + kiro-cli</span>
+                </div>
+            </div>
+
+            <div class="actions">
+                <a id="downloadLink" class="btn btn-primary"
+                   href="kiro-agent-retry.sh"
+                   download="kiro-agent-retry.sh">
+                    ⬇ 下载脚本
+                </a>
+                <button type="button" id="copyBtn" class="btn btn-ghost">
+                    📋 复制全部
+                </button>
+                <a class="btn btn-ghost" href="kiro-agent-retry.sh" target="_blank" rel="noopener">
+                    查看 raw
+                </a>
+            </div>
+        </section>
+
+        <section class="panel">
+            <h2>脚本预览</h2>
+            <p class="lead">下面是脚本完整内容,直接读注释就能上手。</p>
+            <div class="code-wrap">
+                <div class="code-head">
+                    <span class="file">kiro-agent-retry.sh</span>
+                    <span id="codeStatus">加载中…</span>
+                </div>
+                <div class="code-scroll">
+                    <pre class="code" id="codeBlock"><span class="loading">正在加载脚本内容…</span></pre>
+                </div>
+            </div>
+        </section>
+
+        <section class="panel tips">
+            <h2>使用速览</h2>
+            <p>放到项目里(比如 <code>scripts/</code>),加可执行权限后直接调用:</p>
+<pre>chmod +x scripts/kiro-agent-retry.sh
+
+# 直接发一个 prompt
+scripts/kiro-agent-retry.sh "帮我跑一下今天的 build"
+
+# 续上当前目录最近一次会话
+scripts/kiro-agent-retry.sh -r "继续刚才的修复"
+
+# 从最近 10 个会话里挑一个续跑
+scripts/kiro-agent-retry.sh --pick "继续"</pre>
+            <p>命中 <code>dispatch failure</code>、<code>error sending request</code> 等错误模式会自动重试,
+                最多 10 次,每次冷却 5 秒。完整选项见脚本头部注释。</p>
+        </section>
+
+        <footer class="foot">
+            <span>© Agent 工坊</span>
+            <span>由一个人和他的 Agent 共同打造</span>
+        </footer>
+    </div>
+
+    <script src="../../js/tracker.js"></script>
+    <script>
+        (function () {
+            var SCRIPT_URL = 'kiro-agent-retry.sh';
+            var codeBlock = document.getElementById('codeBlock');
+            var codeStatus = document.getElementById('codeStatus');
+            var metaSize = document.getElementById('metaSize');
+            var metaLines = document.getElementById('metaLines');
+            var copyBtn = document.getElementById('copyBtn');
+            var downloadLink = document.getElementById('downloadLink');
+
+            var scriptText = '';
+
+            function escapeHtml(s) {
+                return s.replace(/[&<>]/g, function (ch) {
+                    return ch === '&' ? '&amp;' : ch === '<' ? '&lt;' : '&gt;';
+                });
+            }
+
+            // 极简高亮:整行注释染灰,#! shebang 用强调色,其它原色。
+            function renderHighlighted(text) {
+                var lines = text.split('\n');
+                var pad = String(lines.length).length;
+                var out = '';
+                for (var i = 0; i < lines.length; i++) {
+                    var raw = lines[i];
+                    var trimmed = raw.replace(/^\s+/, '');
+                    var cls = '';
+                    if (i === 0 && trimmed.indexOf('#!') === 0) {
+                        cls = 'shebang';
+                    } else if (trimmed.indexOf('#') === 0) {
+                        cls = 'cmt';
+                    }
+                    var num = String(i + 1);
+                    while (num.length < pad) num = ' ' + num;
+                    var content = escapeHtml(raw);
+                    if (cls) {
+                        content = '<span class="' + cls + '">' + content + '</span>';
+                    }
+                    out += '<span class="line"><span class="ln">' + num + '</span>' + content + '</span>\n';
+                }
+                return out;
+            }
+
+            function humanSize(bytes) {
+                if (bytes < 1024) return bytes + ' B';
+                if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+                return (bytes / 1024 / 1024).toFixed(2) + ' MB';
+            }
+
+            function loadScript() {
+                fetch(SCRIPT_URL, { cache: 'no-cache' })
+                    .then(function (res) {
+                        if (!res.ok) throw new Error('HTTP ' + res.status);
+                        return res.text();
+                    })
+                    .then(function (text) {
+                        scriptText = text;
+                        codeBlock.innerHTML = renderHighlighted(text);
+
+                        var bytes = new Blob([text]).size;
+                        metaSize.textContent = humanSize(bytes);
+                        metaLines.textContent = text.split('\n').length + ' 行';
+                        codeStatus.textContent = '已加载';
+                    })
+                    .catch(function (err) {
+                        codeBlock.innerHTML = '<span class="err">加载失败:' + escapeHtml(String(err.message || err)) + '。可点击上方"下载脚本"或"查看 raw"获取。</span>';
+                        codeStatus.textContent = '加载失败';
+                    });
+            }
+
+            // 复制到剪贴板
+            copyBtn.addEventListener('click', function () {
+                if (!scriptText) {
+                    copyBtn.textContent = '⚠ 还没加载好';
+                    setTimeout(function () { copyBtn.textContent = '📋 复制全部'; }, 1500);
+                    return;
+                }
+                var done = function () {
+                    copyBtn.classList.add('ok');
+                    copyBtn.textContent = '✓ 已复制';
+                    setTimeout(function () {
+                        copyBtn.classList.remove('ok');
+                        copyBtn.textContent = '📋 复制全部';
+                    }, 1500);
+                };
+                var fallback = function () {
+                    var ta = document.createElement('textarea');
+                    ta.value = scriptText;
+                    ta.style.position = 'fixed';
+                    ta.style.left = '-9999px';
+                    document.body.appendChild(ta);
+                    ta.select();
+                    try { document.execCommand('copy'); done(); }
+                    catch (_) {
+                        copyBtn.textContent = '⚠ 复制失败';
+                        setTimeout(function () { copyBtn.textContent = '📋 复制全部'; }, 1500);
+                    }
+                    document.body.removeChild(ta);
+                };
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText(scriptText).then(done).catch(fallback);
+                } else {
+                    fallback();
+                }
+                if (window.Tracker) Tracker.track('kiro-retry_copy');
+            });
+
+            // 下载点击埋点
+            downloadLink.addEventListener('click', function () {
+                if (window.Tracker) Tracker.track('kiro-retry_download');
+            });
+
+            loadScript();
+        })();
+    </script>
+</body>
+</html>

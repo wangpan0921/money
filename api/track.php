@@ -23,6 +23,10 @@ $allowed = [
     'home_view',
     'home_click_income',
     'home_click_ypwd',
+    'home_click_kiro-retry',
+    // kiro-retry 子应用
+    'kiro-retry_download',
+    'kiro-retry_copy',
 ];
 $type = $payload['event_type'] ?? '';
 if (!in_array($type, $allowed, true)) {
