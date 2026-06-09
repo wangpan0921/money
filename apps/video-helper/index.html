@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>视频助手 · Agent 工坊</title>
+    <meta name="description" content="把你手机里正在播放的视频,自动整理成一篇结构清晰的文章。录屏 → 转写 → AI 总结,一条龙。" />
+    <style>
+        :root {
+            --bg: #0e1116;
+            --panel: #161b22;
+            --panel-2: #1c232c;
+            --border: #2a3340;
+            --border-strong: #3a4452;
+            --text: #e6edf3;
+            --muted: #8b949e;
+            --primary: #2f81f7;
+            --primary-hover: #4a96fa;
+            --accent: #a371f7;
+            --radius: 10px;
+        }
+
+        * { box-sizing: border-box; }
+
+        html, body {
+            margin: 0;
+            padding: 0;
+            background: var(--bg);
+            color: var(--text);
+            font-family: -apple-system, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+            font-size: 15px;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        a { color: inherit; text-decoration: none; }
+
+        .page {
+            max-width: 720px;
+            margin: 0 auto;
+            padding: 48px 24px 48px;
+        }
+
+        .back {
+            display: inline-block;
+            color: var(--muted);
+            font-size: 13px;
+            margin-bottom: 24px;
+            transition: color 0.15s ease;
+        }
+        .back:hover { color: var(--text); }
+
+        header.hero {
+            margin-bottom: 32px;
+        }
+        header.hero h1 {
+            margin: 0 0 12px;
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+        header.hero p {
+            margin: 0;
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        .panel {
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 28px;
+            margin-bottom: 20px;
+        }
+
+        .panel h2 {
+            margin: 0 0 8px;
+            font-size: 18px;
+            font-weight: 600;
+        }
+        .panel .lead {
+            margin: 0 0 20px;
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        .meta {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 12px;
+            margin: 0 0 24px;
+            padding: 16px;
+            background: var(--panel-2);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+        }
+        .meta-item {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+        .meta-item .k {
+            color: var(--muted);
+            font-size: 12px;
+        }
+        .meta-item .v {
+            color: var(--text);
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .download-row {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .btn-primary {
+            display: inline-block;
+            background: var(--primary);
+            color: #fff;
+            border: 1px solid var(--primary);
+            border-radius: 8px;
+            padding: 12px 22px;
+            font-size: 15px;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            transition: background 0.15s ease, border-color 0.15s ease;
+        }
+        .btn-primary:hover {
+            background: var(--primary-hover);
+            border-color: var(--primary-hover);
+        }
+
+        .flow {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 8px;
+            margin: 0 0 4px;
+        }
+        .flow .step {
+            background: var(--panel-2);
+            border: 1px solid var(--border);
+            border-radius: 999px;
+            padding: 6px 14px;
+            font-size: 13px;
+            color: var(--text);
+        }
+        .flow .arrow {
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .feat {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+        .feat li {
+            position: relative;
+            padding: 6px 0 6px 22px;
+            color: var(--muted);
+            font-size: 14px;
+        }
+        .feat li::before {
+            content: "→";
+            position: absolute;
+            left: 0;
+            color: var(--accent);
+        }
+        .feat li strong {
+            color: var(--text);
+            font-weight: 600;
+        }
+
+        .panel.tips h2 {
+            font-size: 15px;
+        }
+        .panel.tips p {
+            margin: 6px 0;
+            color: var(--muted);
+            font-size: 13px;
+        }
+        .panel.tips code {
+            background: var(--panel-2);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: 1px 6px;
+            font-size: 12px;
+            color: var(--text);
+        }
+
+        footer.foot {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
+            color: var(--muted);
+            font-size: 12px;
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        @media (max-width: 480px) {
+            .page { padding: 32px 18px 32px; }
+            header.hero h1 { font-size: 24px; }
+            .panel { padding: 20px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="page">
+        <a class="back" href="../../">← 回到 Agent 工坊</a>
+
+        <header class="hero">
+            <h1>视频助手</h1>
+            <p>看过的视频别再"看完就忘"。把正在播放的视频,自动整理成一篇可检索、可复习的文章。</p>
+        </header>
+
+        <section class="panel">
+            <h2>视频助手 APK</h2>
+            <p class="lead">一款 Android App,把手机里正在播放的视频自动转写、总结成文,沉淀成属于你自己的知识库。</p>
+
+            <div class="flow">
+                <span class="step">录屏(采集系统声音)</span>
+                <span class="arrow">→</span>
+                <span class="step">抽取音频</span>
+                <span class="arrow">→</span>
+                <span class="step">语音转文字</span>
+                <span class="arrow">→</span>
+                <span class="step">AI 总结成文</span>
+            </div>
+
+            <div class="meta">
+                <div class="meta-item">
+                    <span class="k">版本</span>
+                    <span class="v">v1.0</span>
+                </div>
+                <div class="meta-item">
+                    <span class="k">大小</span>
+                    <span class="v">2.5 MB</span>
+                </div>
+                <div class="meta-item">
+                    <span class="k">更新日期</span>
+                    <span class="v">2026 年 6 月 9 日</span>
+                </div>
+                <div class="meta-item">
+                    <span class="k">平台</span>
+                    <span class="v">Android</span>
+                </div>
+            </div>
+
+            <div class="download-row">
+                <a href="download/VideoHelper.apk" class="btn-primary" id="downloadLink" download="视频助手.apk">
+                    立即下载 APK (v1.0)
+                </a>
+            </div>
+        </section>
+
+        <section class="panel">
+            <h2>为什么你会喜欢它</h2>
+            <ul class="feat">
+                <li><strong>看完不再是结束。</strong>每条认真看过的视频,都沉淀成一篇属于你的文章,攒下来就是你的知识库。</li>
+                <li><strong>复习快人一步。</strong>文字可以一眼扫过、全文检索,温习一小时视频可能只要两分钟。</li>
+                <li><strong>隐私让你安心。</strong>默认只录系统声音,不开麦克风;录制、音频与转写默认只存在手机私有目录,API Key 仅保存在本机。</li>
+                <li><strong>省心且容错。</strong>流水线每步结果都会保存,失败可单独重试、断点续跑,不会前功尽弃。</li>
+            </ul>
+        </section>
+
+        <section class="panel tips">
+            <h2>安装说明</h2>
+            <p>下载完成后,点击 APK 文件进行安装。</p>
+            <p>如果提示 <code>禁止安装未知来源应用</code>,请前往设置中允许安装未知来源应用。</p>
+        </section>
+
+        <footer class="foot">
+            <span>© Agent 工坊</span>
+            <span>由一个人和他的 Agent 共同打造</span>
+        </footer>
+    </div>
+
+    <script src="../../js/tracker.js"></script>
+    <script>
+        // 下载点击埋点
+        document.getElementById('downloadLink').addEventListener('click', function () {
+            if (window.Tracker) Tracker.track('video-helper_download');
+        });
+    </script>
+</body>
+</html>

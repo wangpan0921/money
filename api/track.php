@@ -24,9 +24,12 @@ $allowed = [
     'home_click_income',
     'home_click_ypwd',
     'home_click_kiro-retry',
+    'home_click_video-helper',
     // kiro-retry 子应用
     'kiro-retry_download',
     'kiro-retry_copy',
+    // video-helper 子应用
+    'video-helper_download',
 ];
 $type = $payload['event_type'] ?? '';
 if (!in_array($type, $allowed, true)) {
