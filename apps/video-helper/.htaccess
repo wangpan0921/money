@@ -1,14 +1,15 @@
-# 修复手机浏览器下载 APK 只有 1KB 的问题
-# InfinityFree 默认可能不识别 .apk 的 MIME 类型,导致返回错误页面而非真实文件
-# 明确声明 MIME 类型并强制作为附件下载
+# APK 文件以 .zip 后缀存储以绕过 InfinityFree 的文件类型拦截
+# 实际下载通过 download.php 完成,设置正确的 Content-Type 和文件名
 
-AddType application/vnd.android.package-archive .apk
+# 防止直接访问 .zip 文件(引导走 download.php)
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteRule ^download/.*\.zip$ /apps/video-helper/download.php [L,R=302]
+</IfModule>
 
+# 确保 PHP 脚本不被缓存
 <IfModule mod_headers.c>
-    <FilesMatch "\.apk$">
-        Header set Content-Type "application/vnd.android.package-archive"
-        Header set Content-Disposition "attachment"
-        # 不要缓存,确保每次都拿到最新版本
+    <FilesMatch "download\.php$">
         Header set Cache-Control "no-cache, no-store, must-revalidate"
         Header set Pragma "no-cache"
     </FilesMatch>
