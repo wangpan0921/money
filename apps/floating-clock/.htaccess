@@ -3,6 +3,8 @@
 
 <IfModule mod_headers.c>
     <FilesMatch "\.apk\.zip$">
+        Header set Content-Type "application/vnd.android.package-archive"
+        Header set Content-Disposition "attachment; filename=floating-clock-standard-v1.0-release.apk"
         Header set Cache-Control "no-cache, no-store, must-revalidate"
         Header set Pragma "no-cache"
         Header set X-Content-Type-Options "nosniff"
