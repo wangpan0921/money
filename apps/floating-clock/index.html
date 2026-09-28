@@ -211,10 +211,10 @@
         </div>
       </div>
 
-      <a href="https://cdn.jsdelivr.net/gh/wangpan0921/money@34c6ffbdbdbe8504afb00092420370132a24d867/apps/floating-clock/download/floating-clock-standard-v1.0-release.apk"
-         download="floating-clock-standard-v1.0-release.apk"
+      <a href="https://cdn.jsdelivr.net/gh/wangpan0921/money@654ffd06655c33863086aa9f45732240d275b5c1/apps/floating-clock/download/floating-clock-v1.0-install.zip"
+         download="floating-clock-v1.0-install.zip"
          class="btn-primary"
-         id="downloadLink">立即下载 APK (v1.0)</a>
+         id="downloadLink">下载 Android 安装包 ZIP (v1.0)</a>
       <p id="downloadStatus" role="status" aria-live="polite" style="margin: 12px 0 0; color: var(--muted); font-size: 13px;"></p>
     </section>
 
@@ -230,8 +230,9 @@
 
     <section class="panel tips">
       <h2>安装说明</h2>
-      <p>下载完成后，文件应为 APK 格式且大小约 95 KB，再点击进行安装。</p>
-      <p>如果提示 <code>禁止安装未知来源应用</code>，请在系统设置中允许当前浏览器安装未知应用。</p>
+      <p>下载得到 <code>floating-clock-v1.0-install.zip</code>（约 95 KB）。</p>
+      <p>请在文件管理器中打开 ZIP 并解压，然后点击其中的 <code>floating-clock-standard-v1.0-release.apk</code> 安装。</p>
+      <p>如果提示 <code>禁止安装未知来源应用</code>，请按系统提示允许文件管理器安装未知应用。</p>
       <p>首次开启悬浮时钟时，请按应用引导授予“显示在其他应用上层”权限。</p>
     </section>
 
@@ -247,10 +248,9 @@
       var downloadLink = document.getElementById('downloadLink');
       var downloadStatus = document.getElementById('downloadStatus');
 
-      // 不阻止默认跳转：让下载保持在用户本次点击的瞬时激活中，
-      // 兼容 Android 14 对异步程序化下载的限制。
+      // ZIP 由浏览器作为普通文件下载，避免 Android 14 小米应用商店接管 APK。
       downloadLink.addEventListener('click', function () {
-        downloadStatus.textContent = '正在调用浏览器下载，完整文件大小约 95 KB。';
+        downloadStatus.textContent = '浏览器正在下载 ZIP（约 95 KB），下载后请解压并安装其中的 APK。';
         if (window.Tracker) window.Tracker.track('floating-clock_download');
       });
     })();
