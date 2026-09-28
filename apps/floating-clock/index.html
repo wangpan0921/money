@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>悬浮时钟 · Agent 工坊</title>
+  <meta name="description" content="Android 带秒悬浮时钟，支持自由拖动、位置微调和贴顶显示。" />
+  <style>
+    :root {
+      --bg: #0e1116;
+      --panel: #161b22;
+      --panel-2: #1c232c;
+      --border: #2a3340;
+      --text: #e6edf3;
+      --muted: #8b949e;
+      --primary: #2f81f7;
+      --primary-hover: #4a96fa;
+      --accent: #a371f7;
+      --radius: 10px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    .page {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 48px 24px;
+    }
+
+    .back {
+      display: inline-block;
+      margin-bottom: 24px;
+      color: var(--muted);
+      font-size: 13px;
+      transition: color 0.15s ease;
+    }
+    .back:hover { color: var(--text); }
+
+    header.hero { margin-bottom: 32px; }
+    header.hero h1 {
+      margin: 0 0 12px;
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+    header.hero p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .panel {
+      margin-bottom: 20px;
+      padding: 28px;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+    }
+    .panel h2 {
+      margin: 0 0 8px;
+      font-size: 18px;
+      font-weight: 600;
+    }
+    .panel .lead {
+      margin: 0 0 20px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .meta {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 12px;
+      margin: 0 0 24px;
+      padding: 16px;
+      background: var(--panel-2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+    }
+    .meta-item {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .meta-item .k {
+      color: var(--muted);
+      font-size: 12px;
+    }
+    .meta-item .v {
+      color: var(--text);
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .btn-primary {
+      display: inline-block;
+      padding: 12px 22px;
+      background: var(--primary);
+      color: #fff;
+      border: 1px solid var(--primary);
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      transition: background 0.15s ease, border-color 0.15s ease;
+    }
+    .btn-primary:hover {
+      background: var(--primary-hover);
+      border-color: var(--primary-hover);
+    }
+
+    .feat {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+    .feat li {
+      position: relative;
+      padding: 6px 0 6px 22px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+    .feat li::before {
+      position: absolute;
+      left: 0;
+      color: var(--accent);
+      content: "→";
+    }
+    .feat strong {
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    .tips h2 { font-size: 15px; }
+    .tips p {
+      margin: 6px 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .tips code {
+      padding: 1px 6px;
+      background: var(--panel-2);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      font-size: 12px;
+    }
+
+    footer.foot {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 40px;
+      padding-top: 20px;
+      color: var(--muted);
+      border-top: 1px solid var(--border);
+      font-size: 12px;
+    }
+
+    @media (max-width: 480px) {
+      .page { padding: 32px 18px; }
+      header.hero h1 { font-size: 24px; }
+      .panel { padding: 20px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <a class="back" href="../../">← 回到 Agent 工坊</a>
+
+    <header class="hero">
+      <h1>悬浮时钟</h1>
+      <p>把带秒的数字时钟放在屏幕上方，切换应用时也能随时看清当前时间。</p>
+    </header>
+
+    <section class="panel">
+      <h2>悬浮时钟 APK</h2>
+      <p class="lead">轻量 Android 工具，支持悬浮显示、自由拖动、位置微调和贴顶显示。</p>
+
+      <div class="meta">
+        <div class="meta-item">
+          <span class="k">版本</span>
+          <span class="v">v1.0</span>
+        </div>
+        <div class="meta-item">
+          <span class="k">大小</span>
+          <span class="v">95 KB</span>
+        </div>
+        <div class="meta-item">
+          <span class="k">更新日期</span>
+          <span class="v">2026 年 9 月 28 日</span>
+        </div>
+        <div class="meta-item">
+          <span class="k">平台</span>
+          <span class="v">Android</span>
+        </div>
+      </div>
+
+      <a href="download.php" class="btn-primary" id="downloadLink">立即下载 APK (v1.0)</a>
+    </section>
+
+    <section class="panel">
+      <h2>主要功能</h2>
+      <ul class="feat">
+        <li><strong>带秒时间常显。</strong>在其他应用上方显示清晰的数字时钟。</li>
+        <li><strong>位置自由调整。</strong>可拖动时钟，并通过方向按钮精确微调位置。</li>
+        <li><strong>贴顶显示。</strong>支持将时钟放到屏幕顶部，需要移动时可从设置页调整。</li>
+        <li><strong>7 天完整试用。</strong>悬浮功能可免费试用 7 天，桌面小部件保持免费。</li>
+      </ul>
+    </section>
+
+    <section class="panel tips">
+      <h2>安装说明</h2>
+      <p>下载完成后，点击 APK 文件进行安装。</p>
+      <p>如果提示 <code>禁止安装未知来源应用</code>，请在系统设置中允许当前浏览器安装未知应用。</p>
+      <p>首次开启悬浮时钟时，请按应用引导授予“显示在其他应用上层”权限。</p>
+    </section>
+
+    <footer class="foot">
+      <span>© Agent 工坊</span>
+      <span>由一个人和他的 Agent 共同打造</span>
+    </footer>
+  </div>
+
+  <script src="../../js/tracker.js"></script>
+  <script>
+    document.getElementById('downloadLink').addEventListener('click', function () {
+      if (window.Tracker) window.Tracker.track('floating-clock_download');
+    });
+  </script>
+</body>
+</html>
