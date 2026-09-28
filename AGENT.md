@@ -37,7 +37,7 @@
 - **income**(`apps/income/`):中国个税计算器。累计预扣预缴、专项附加扣除、年终奖最优计税、RSU/期权/ESPP。纯前端,数据不上传。逻辑在 `app.js` / `tax.js` / `stock.js`。
 - **ypwd**(`apps/ypwd/`):Android 小密码管理器的 APK 下载页。`record_download.php` / `get_count.php` 记录与展示下载次数。`website/` 是辅助资料,不上线。
 - **kiro-retry**(`apps/kiro-retry/`):`kiro-agent-retry.sh` 的在线查看 + 下载页。`.htaccess` 把 `.sh` 以 `text/plain` 内联返回。
-- **floating-clock**(`apps/floating-clock/`):Android 带秒悬浮时钟下载页。APK 以 `.apk.zip` 后缀存储，浏览器同源读取并校验后生成 `.apk` 下载，避免 InfinityFree 截断 PHP 二进制响应。
+- **floating-clock**(`apps/floating-clock/`):Android 带秒悬浮时钟下载页。APK 以 `.apk.zip` 后缀存储，服务器通过响应头指定 APK 类型和文件名，用户点击后由浏览器同步原生下载，避免 InfinityFree 截断和 Android 14 拦截异步 Blob 下载。
 
 ## 约定与红线
 
