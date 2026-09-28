@@ -27,7 +27,8 @@
 ├── apps/
 │   ├── income/             # 中国个税计算器(纯前端)
 │   ├── ypwd/               # Android 密码管理器 APK 下载页 + PHP 计数
-│   └── kiro-retry/         # kiro-cli 自动重试脚本的展示/下载页
+│   ├── kiro-retry/         # kiro-cli 自动重试脚本的展示/下载页
+│   └── floating-clock/     # Android 悬浮时钟 APK 下载页
 └── .github/workflows/deploy.yml  # 推 main 自动 FTP 部署到 InfinityFree
 ```
 
@@ -36,6 +37,7 @@
 - **income**(`apps/income/`):中国个税计算器。累计预扣预缴、专项附加扣除、年终奖最优计税、RSU/期权/ESPP。纯前端,数据不上传。逻辑在 `app.js` / `tax.js` / `stock.js`。
 - **ypwd**(`apps/ypwd/`):Android 小密码管理器的 APK 下载页。`record_download.php` / `get_count.php` 记录与展示下载次数。`website/` 是辅助资料,不上线。
 - **kiro-retry**(`apps/kiro-retry/`):`kiro-agent-retry.sh` 的在线查看 + 下载页。`.htaccess` 把 `.sh` 以 `text/plain` 内联返回。
+- **floating-clock**(`apps/floating-clock/`):Android 带秒悬浮时钟下载页。APK 以 `.apk.zip` 后缀存储，通过 `download.php` 输出。
 
 ## 约定与红线
 

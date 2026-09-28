@@ -11,6 +11,7 @@
 | 💰 我今年挣了多少钱 | [`apps/income/`](apps/income/) | 中国个税计算器。支持累计预扣预缴、专项附加扣除、年终奖最优计税、RSU/期权/ESPP。纯前端，数据不上传。 |
 | 🔐 我的密码我自己管 | [`apps/ypwd/`](apps/ypwd/) | Android 端小密码管理器的 APK 下载页，附下载计数。 |
 | 🔁 Kiro Agent 自动重试脚本 | [`apps/kiro-retry/`](apps/kiro-retry/) | `kiro-cli chat` 的非交互式包装脚本，出错自动重试，可在线查看与下载。 |
+| 🕐 悬浮时钟 | [`apps/floating-clock/`](apps/floating-clock/) | Android 带秒悬浮时钟，支持自由拖动、位置微调和贴顶显示。 |
 
 主页 [`index.html`](index.html) 是这些应用的导航入口。
 
