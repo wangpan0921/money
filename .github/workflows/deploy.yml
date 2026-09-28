@@ -42,6 +42,7 @@ jobs:
             doc/**
             sql/**
             apps/ypwd/website/**
+            apps/floating-clock/download/*.apk
             api/config.php
             api/config.example.php
             **/.DS_Store
