@@ -195,15 +195,15 @@
       <div class="meta">
         <div class="meta-item">
           <span class="k">版本</span>
-          <span class="v">v1.0</span>
+          <span class="v">v1.1.0</span>
         </div>
         <div class="meta-item">
           <span class="k">大小</span>
-          <span class="v">95 KB</span>
+          <span class="v">177 KB</span>
         </div>
         <div class="meta-item">
           <span class="k">更新日期</span>
-          <span class="v">2026 年 9 月 28 日</span>
+          <span class="v">2026 年 10 月 4 日</span>
         </div>
         <div class="meta-item">
           <span class="k">平台</span>
@@ -211,10 +211,10 @@
         </div>
       </div>
 
-      <a href="https://cdn.jsdelivr.net/gh/wangpan0921/money@654ffd06655c33863086aa9f45732240d275b5c1/apps/floating-clock/download/floating-clock-v1.0-install.zip"
-         download="floating-clock-v1.0-install.zip"
+      <a href="https://cdn.jsdelivr.net/gh/wangpan0921/money@bb4f214a45cc914fa67604028dd30149fd37ec7b/apps/floating-clock/download/floating-clock-v1.1.0-install.zip"
+         download="floating-clock-v1.1.0-install.zip"
          class="btn-primary"
-         id="downloadLink">下载 Android 安装包 ZIP (v1.0)</a>
+         id="downloadLink">下载 Android 安装包 ZIP (v1.1.0)</a>
       <p id="downloadStatus" role="status" aria-live="polite" style="margin: 12px 0 0; color: var(--muted); font-size: 13px;"></p>
     </section>
 
@@ -230,8 +230,8 @@
 
     <section class="panel tips">
       <h2>安装说明</h2>
-      <p>下载得到 <code>floating-clock-v1.0-install.zip</code>（约 95 KB）。</p>
-      <p>请在文件管理器中打开 ZIP 并解压，然后点击其中的 <code>floating-clock-standard-v1.0-release.apk</code> 安装。</p>
+      <p>下载得到 <code>floating-clock-v1.1.0-install.zip</code>（约 177 KB）。</p>
+      <p>请在文件管理器中打开 ZIP 并解压，然后点击其中的 <code>floating-clock-standard-v1.1.0-release.apk</code> 安装。</p>
       <p>如果提示 <code>禁止安装未知来源应用</code>，请按系统提示允许文件管理器安装未知应用。</p>
       <p>首次开启悬浮时钟时，请按应用引导授予“显示在其他应用上层”权限。</p>
     </section>
@@ -250,7 +250,7 @@
 
       // ZIP 由浏览器作为普通文件下载，避免 Android 14 小米应用商店接管 APK。
       downloadLink.addEventListener('click', function () {
-        downloadStatus.textContent = '浏览器正在下载 ZIP（约 95 KB），下载后请解压并安装其中的 APK。';
+        downloadStatus.textContent = '浏览器正在下载 ZIP（约 177 KB），下载后请解压并安装其中的 APK。';
         if (window.Tracker) window.Tracker.track('floating-clock_download');
       });
     })();
