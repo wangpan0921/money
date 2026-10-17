@@ -195,7 +195,7 @@
       <div class="meta">
         <div class="meta-item">
           <span class="k">版本</span>
-          <span class="v">v1.3.1</span>
+          <span class="v">v1.3.2</span>
         </div>
         <div class="meta-item">
           <span class="k">大小</span>
@@ -203,7 +203,7 @@
         </div>
         <div class="meta-item">
           <span class="k">更新日期</span>
-          <span class="v">2026 年 10 月 13 日</span>
+          <span class="v">2026 年 10 月 17 日</span>
         </div>
         <div class="meta-item">
           <span class="k">平台</span>
@@ -211,10 +211,10 @@
         </div>
       </div>
 
-      <a href="download/floating-clock-v1.3.1-install.zip"
-         download="floating-clock-v1.3.1-install.zip"
+      <a href="download/floating-clock-standard-v1.3.2-release.apk.zip"
+         download="floating-clock-standard-v1.3.2-release.apk"
          class="btn-primary"
-         id="downloadLink">下载 Android 安装包 ZIP (v1.3.1)</a>
+         id="downloadLink">下载 Android APK (v1.3.2)</a>
       <p id="downloadStatus" role="status" aria-live="polite" style="margin: 12px 0 0; color: var(--muted); font-size: 13px;"></p>
     </section>
 
@@ -230,8 +230,7 @@
 
     <section class="panel tips">
       <h2>安装说明</h2>
-      <p>下载得到 <code>floating-clock-v1.3.1-install.zip</code>（约 182 KB）。</p>
-      <p>请在文件管理器中打开 ZIP 并解压，然后点击其中的 <code>floating-clock-standard-v1.3.1-release.apk</code> 安装。</p>
+      <p>下载得到 <code>floating-clock-standard-v1.3.2-release.apk</code>（约 182 KB），在文件管理器中点击即可安装。</p>
       <p>如果提示 <code>禁止安装未知来源应用</code>，请按系统提示允许文件管理器安装未知应用。</p>
       <p>首次开启悬浮时钟时，请按应用引导授予“显示在其他应用上层”权限。</p>
     </section>
@@ -248,9 +247,10 @@
       var downloadLink = document.getElementById('downloadLink');
       var downloadStatus = document.getElementById('downloadStatus');
 
-      // ZIP 由浏览器作为普通文件下载，避免 Android 14 小米应用商店接管 APK。
+      // 服务端通过 .htaccess 的 mod_headers 把 .apk.zip 伪装成 .apk 下发，
+      // 绕开 InfinityFree 对直出 .apk 的截断，浏览器直接拿到 APK 文件。
       downloadLink.addEventListener('click', function () {
-        downloadStatus.textContent = '浏览器正在下载 ZIP（约 182 KB），下载后请解压并安装其中的 APK。';
+        downloadStatus.textContent = '浏览器正在下载 APK（约 182 KB），下载后在文件管理器中点击安装。';
         if (window.Tracker) window.Tracker.track('floating-clock_download');
       });
     })();
